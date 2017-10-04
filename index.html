@@ -3,28 +3,41 @@
 <body>
 <script>
 console.log('Hello, world!');
-const ws = new WebSocket('ws://' + document.location.host + document.location.pathname + document.location.search);
-ws.addEventListener('open', e => {
-  ws.addEventListener('message', e => {
-    const m = JSON.parse(e.data);
-    const {type} = m;
-    if (type === 'message') {
-      const {message} = m;
-      console.log(message);
-    } else if (type === 'response') {
-      const {error} = m;
-      if (error) {
-        console.warn('got error', JSON.stringify(error));
+const _connect = () => {
+  const ws = new WebSocket('ws://' + document.location.host + document.location.pathname + document.location.search);
+  ws.addEventListener('open', e => {
+    console.log('connected');
+
+    ws.addEventListener('message', e => {
+      const m = JSON.parse(e.data);
+      const {type} = m;
+      if (type === 'message') {
+        const {message} = m;
+        console.log(message);
+      } else if (type === 'response') {
+        const {error} = m;
+        if (error) {
+          console.warn('got error', JSON.stringify(error));
+        }
+      } else {
+        console.warn('unknown message type', JSON.stringify(type));
       }
-    } else {
-      console.warn('unknown message type', JSON.stringify(type));
-    }
+    });
+    ws.addEventListener('close', e => {
+      _connect();
+    });
+    ws.send(JSON.stringify({
+      url: '/?zol',
+      message: 'hi there',
+    }));
   });
-  ws.send(JSON.stringify({
-    url: '/?zol',
-    message: 'hi there',
-  }));
-});
+  ws.addEventListener('error', err => {
+    console.warn('connection error', err);
+
+    setTimeout(_connect, 2000);
+  });
+};
+_connect();
 </script>
 </body>
 </html>
