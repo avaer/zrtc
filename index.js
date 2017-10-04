@@ -32,7 +32,7 @@ wss.on('connection', (c, req) => {
     } else {
       c.send(JSON.stringify({
         type: 'response',
-        error: 'no such peer: ' + JSON.stringify({id, peers: Object.keys(connections).filter(k => _isValidConnection(connections[k]))}),
+        error: 'no such peer: ' + JSON.stringify({message: m, id: id || null, peers: Object.keys(connections).filter(k => _isValidConnection(connections[k]))}),
       }));
     }
   });
