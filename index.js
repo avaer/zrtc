@@ -23,6 +23,7 @@ wss.on('connection', (c, req) => {
       const {message} = m;
       c2.send(JSON.stringify({
         type: 'message',
+        id,
         message,
       }));
       c.send(JSON.stringify({
