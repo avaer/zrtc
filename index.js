@@ -9,6 +9,7 @@ app.use(express.static(__dirname));
 const server = http.createServer(app);
 const wss = new ws.Server({server});
 const connections = [];
+const _isValidConnection = c => c && c.readyState === ws.OPEN;
 wss.on('connection', (c, req) => {
   const {url} = req;
   console.log(url);
@@ -18,7 +19,7 @@ wss.on('connection', (c, req) => {
     const {url} = m;
     const c2 = connections[url];
 
-    if (c2 && c2.readyState === ws.OPEN) {
+    if (_isValidConnection(c2)) {
       const {message} = m;
       c2.send(JSON.stringify({
         type: 'message',
@@ -31,7 +32,7 @@ wss.on('connection', (c, req) => {
     } else {
       c.send(JSON.stringify({
         type: 'response',
-        error: 'no such peer',
+        error: 'no such peer: ' + JSON.stringify({id: url, peers: Object.keys(connections).filter(k => _isValidConnection(connections[k]))}),
       }));
     }
   });
