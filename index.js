@@ -17,7 +17,8 @@ wss.on('connection', (c, req) => {
     const m = JSON.parse(s);
     const {url} = m;
     const c2 = connections[url];
-    if (c2) {
+
+    if (c2 && c2.readyState === ws.OPEN) {
       const {message} = m;
       c2.send(JSON.stringify({
         type: 'message',

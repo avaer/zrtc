@@ -2,7 +2,6 @@
 <html>
 <body>
 <script>
-console.log('Hello, world!');
 const _connect = () => {
   const ws = new WebSocket('ws://' + document.location.host + document.location.pathname + document.location.search);
   ws.addEventListener('open', e => {
